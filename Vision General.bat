@@ -13,6 +13,7 @@ TIMEOUT 4
 rem Appeler la fonction d'ouverture des fichiers
 call :ouvrirFichier %HISTORIQUE_ACHATS% "Historique d achats.xlsx"
 call :ouvrirFichier %VISION_GENERAL% "Vision General.xlsx"
+start push_Changes.sh
 
 goto :eof
 
