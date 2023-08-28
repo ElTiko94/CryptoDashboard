@@ -55,7 +55,7 @@ def update_excel_file(file_name, token_prices):
 
 today = datetime.datetime.now()
 starAtlasJ0 = datetime.datetime(2021, 12, 17)
-file_name = "Data/Historique d'achats.xlsx"
+file_name = r"Data/Historique d'achats.xlsx"
 api_key = '33921097-6bb4-45e6-89a4-52591f85703b'
 
 tokens = ['BTC', 'ETH', 'ATLAS', 'POLIS', 'LUNC', 'LUNA', 'SOL', 'BNB', 'MATIC', 'ATOM', 'EGLD', 'NEAR', 'GRT', 'AMP',
