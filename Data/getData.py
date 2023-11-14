@@ -45,7 +45,9 @@ def update_excel_file(file_name, token_prices,rewards):
         cell.value = float(price)
         if token in rewards:
             cell = getYellowCells(sheet)
+            
             sheet.cell(row=cell[0][0], column=cell[0][1]).value = float(rewards[token])
+
 
 
     # Save changes
@@ -67,7 +69,7 @@ def getGreenCells(sheet, column_letter='B'):
 
     # Iterate through each cell in the specified column
     for row in sheet[column_letter]:
-        if row.fill.start_color.index == 'FFFFFF00':  # Yellow fill color in hex
+        if row.fill.start_color.index == 'FF00FF00':  # Yellow fill color in hex
             Green_cells.append((row.row, row.column))
             break
 
