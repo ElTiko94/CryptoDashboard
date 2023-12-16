@@ -5,6 +5,7 @@ import datetime
 from requests import Request, Session
 from requests.exceptions import ConnectionError, Timeout, TooManyRedirects
 from get_cumulative_total_rewards import get_cumulative_total_rewards
+from get_auto_invest_amount import get_auto_invest_amount
 
 
 green_sheets = []
@@ -30,7 +31,7 @@ def get_crypto_prices(symbols, api_key):
 
     return prices
 
-def update_excel_file(file_name, token_prices,rewards):
+def update_excel_file(file_name, token_prices,rewards, auto_invest):
     excel_file = openpyxl.load_workbook(file_name)
 
     # Update Star Atlas number of Stacking days
@@ -48,10 +49,20 @@ def update_excel_file(file_name, token_prices,rewards):
             
             sheet.cell(row=cell[0][0], column=cell[0][1]).value = float(rewards[token])
 
-
+    for plan in auto_invest:
+        for detail in plan["details"]:
+            sheet = excel_file[str(detail['targetAsset'])]
+            cell_row = getDCACell(sheet, plan['planId'])
+            sheet.cell(row=cell_row, column=2).value = float(detail['purchasedAmount'])
+            sheet.cell(row=cell_row, column=4).value = float(detail['totalInvestedInUSD'])
 
     # Save changes
     excel_file.save(file_name)
+
+def getDCACell(sheet, planId, column_letter='E'):
+    for row in sheet[column_letter]:
+        if row.value == planId:  # Yellow fill color in hex
+            return row.row
 
 def getYellowCells(sheet, column_letter='B'):
     yellow_cells = []
@@ -87,5 +98,6 @@ tokens = ['BTC', 'ETH', 'ATLAS', 'POLIS', 'LUNC', 'LUNA', 'SOL', 'BNB', 'MATIC',
 token_prices = get_crypto_prices(tokens, api_key)
 
 rewards = get_cumulative_total_rewards()
+auto_invest = get_auto_invest_amount()
 if token_prices is not None:
-    update_excel_file(file_name, token_prices, rewards )
+    update_excel_file(file_name, token_prices, rewards, auto_invest )
