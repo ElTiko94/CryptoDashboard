@@ -23,7 +23,7 @@ If you have Git installed, clone the repository using:
 
 ```bash
 git clone https://github.com/yourusername/CryptoDashboard.git
-
+```
 
 Alternatively, you can download the source code directly from the repository page.
 
@@ -37,3 +37,4 @@ Navigate to the root directory of the project and create a file named `config.js
   "binance_api_key": "your_binance_api_key",
   "binance_api_secret": "your_secret_binance_api_key"
 }
+```
