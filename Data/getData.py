@@ -92,7 +92,7 @@ today = datetime.datetime.now()
 starAtlasJ0 = datetime.datetime(2021, 12, 17)
 file_name = r"C:\Users\Tiko\Desktop\Tiko\investissement\Gestion de crypto\Data\Historique d'achats.xlsx"
 
-json_path = os.path.join(os.environ.get('crypto_path'), 'config.json')
+json_path = os.path.join(os.environ.get('crypto_path'), 'Data/config.json')
 
 with open(json_path, 'r') as config_file:
     config = json.load(config_file)

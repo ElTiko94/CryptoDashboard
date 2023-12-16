@@ -5,8 +5,9 @@ import hashlib
 import time
 from urllib.parse import urlencode
 
+json_path = os.path.join(os.environ.get('crypto_path'), 'Data/config.json')
 
-with open('config.json', 'r') as config_file:
+with open(json_path, 'r') as config_file:
     config = json.load(config_file)
 
 API_KEY = config['binance_api_key']
