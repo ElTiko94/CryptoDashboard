@@ -28,7 +28,7 @@ git clone https://github.com/yourusername/CryptoDashboard.git
 Alternatively, you can download the source code directly from the repository page.
 
 
-### Step 3: Set Environment Variable
+### Step 2: Set Environment Variable
 Set an environment variable named crypto_path to the path of your local repository.
 
 Windows:
@@ -36,7 +36,7 @@ Open Command Prompt and execute:
 ```cmd
 setx crypto_path "C:\path\to\CryptoDashboard"
 ```
-### Step 2: Create Configuration File
+### Step 3: Create Configuration File
 
 Navigate to the crypto_path/Data of the project and create a file named `config.json` with the following content:
 
