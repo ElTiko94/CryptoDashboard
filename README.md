@@ -11,7 +11,7 @@ These instructions will guide you through the setup process required to get Cryp
 
 What you need to install the software and how to install them:
 
-- Python 3.7 an beyond
+- Python 3.7 and beyond
 - Access to CoinMarketCap and Binance APIs (API keys)
 - Git (optional, for cloning the repository)
 
