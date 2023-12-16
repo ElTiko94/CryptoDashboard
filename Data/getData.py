@@ -61,8 +61,9 @@ def update_excel_file(file_name, token_prices,rewards, auto_invest):
 
 def getDCACell(sheet, planId, column_letter='E'):
     for row in sheet[column_letter]:
-        if row.value == planId:  # Yellow fill color in hex
+        if row.value == planId:
             return row.row
+    return None
 
 def getYellowCells(sheet, column_letter='B'):
     yellow_cells = []
