@@ -90,13 +90,19 @@ def getGreenCells(sheet, column_letter='B'):
 today = datetime.datetime.now()
 starAtlasJ0 = datetime.datetime(2021, 12, 17)
 file_name = r"C:\Users\Tiko\Desktop\Tiko\investissement\Gestion de crypto\Data\Historique d'achats.xlsx"
-api_key = '33921097-6bb4-45e6-89a4-52591f85703b'
+
+with open('config.json', 'r') as config_file:
+    config = json.load(config_file)
+
+coinmarketcap_api_key = config['coinmarketcap_api_key']
+binance_api_key = config['binance_api_key']
+binance_api_secret = config['binance_api_secret']
 
 tokens = ['BTC', 'ETH', 'ATLAS', 'POLIS', 'LUNC', 'LUNA', 'SOL', 'BNB', 'MATIC', 'ATOM', 'EGLD', 'NEAR', 'GRT', 'AMP',
           'SHPING', 'XRP', 'DOT', 'LTC', 'TRX', 'ADA', 'ALGO', 'APE', 'AVAX', 'KAVA', 'DOGE', 'UNI', 'LINK', 'LDO',
           'ICP', 'SHIB', 'MINA', 'SEI']
 
-token_prices = get_crypto_prices(tokens, api_key)
+token_prices = get_crypto_prices(tokens, coinmarketcap_api_key)
 
 rewards = get_cumulative_total_rewards()
 auto_invest = get_auto_invest_amount()
