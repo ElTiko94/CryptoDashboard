@@ -94,7 +94,7 @@ api_key = '33921097-6bb4-45e6-89a4-52591f85703b'
 
 tokens = ['BTC', 'ETH', 'ATLAS', 'POLIS', 'LUNC', 'LUNA', 'SOL', 'BNB', 'MATIC', 'ATOM', 'EGLD', 'NEAR', 'GRT', 'AMP',
           'SHPING', 'XRP', 'DOT', 'LTC', 'TRX', 'ADA', 'ALGO', 'APE', 'AVAX', 'KAVA', 'DOGE', 'UNI', 'LINK', 'LDO',
-          'ICP', 'SHIB', 'MINA']
+          'ICP', 'SHIB', 'MINA', 'SEI']
 
 token_prices = get_crypto_prices(tokens, api_key)
 
