@@ -103,7 +103,7 @@ binance_api_secret = config['binance_api_secret']
 
 tokens = ['BTC', 'ETH', 'ATLAS', 'POLIS', 'LUNC', 'LUNA', 'SOL', 'BNB', 'MATIC', 'ATOM', 'EGLD', 'NEAR', 'GRT', 'AMP',
           'SHPING', 'XRP', 'DOT', 'LTC', 'TRX', 'ADA', 'ALGO', 'APE', 'AVAX', 'KAVA', 'DOGE', 'UNI', 'LINK', 'LDO',
-          'ICP', 'SHIB', 'MINA', 'SEI','MEME']
+          'ICP', 'SHIB', 'MINA', 'SEI','MEME','ACE']
 
 token_prices = get_crypto_prices(tokens, coinmarketcap_api_key)
 
