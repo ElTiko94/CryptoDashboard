@@ -4,7 +4,8 @@ plan_id_to_name = {
     2202785: "DCA1",
     2202830: "DCA2",
     2985282: "DCA3",
-    3068471: "DCA4"
+    3068471: "DCA4",
+    7228590: "DCA5"
 }
 
 def get_plans_id():
@@ -43,3 +44,6 @@ def get_auto_invest_amount():
         plans.append(plan)
 
     return plans
+
+
+get_auto_invest_amount()
