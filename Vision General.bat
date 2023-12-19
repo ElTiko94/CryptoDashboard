@@ -8,7 +8,7 @@ set VISION_GENERAL="Data\Vision General.xlsx"
 rem Exécuter getData.py
 echo Exécution de getData.py...
 start "getData.py" %DATA_PY%
-TIMEOUT 20
+TIMEOUT 18
 
 rem Appeler la fonction d'ouverture des fichiers
 call :ouvrirFichier %HISTORIQUE_ACHATS% "Historique d achats.xlsx"
