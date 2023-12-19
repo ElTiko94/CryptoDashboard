@@ -88,6 +88,8 @@ def getGreenCells(sheet, column_letter='O'):
     for row in sheet[column_letter]:
         if row.fill.start_color.index == 'FF00FF00':  # Yellow fill color in hex
             Green_cells.append((row.row, row.column))
+            print("ddddddddddddd")
+            print(Green_cells)
             break
 
     return Green_cells
