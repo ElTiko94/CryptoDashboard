@@ -45,10 +45,6 @@ def update_excel_file(file_name, token_prices,rewards, auto_invest):
         sheet = excel_file[str(token)]
         cell = sheet.cell(row=3, column=10)  # J3
         cell.value = float(price)
-        green_cells = getGreenCells(sheet)
-
-        if green_cells != []:
-          token_to_sell_or_buy = token_to_sell_or_buy.append(token);
         if token in rewards:
             cell = getYellowCells(sheet)
             
@@ -81,15 +77,13 @@ def getYellowCells(sheet, column_letter='B'):
 
     return yellow_cells
 
-def getGreenCells(sheet, column_letter='O'):
+def getGreenCells(sheet, column_letter='B'):
     Green_cells = []
 
     # Iterate through each cell in the specified column
     for row in sheet[column_letter]:
         if row.fill.start_color.index == 'FF00FF00':  # Yellow fill color in hex
             Green_cells.append((row.row, row.column))
-            print("ddddddddddddd")
-            print(Green_cells)
             break
 
     return Green_cells
@@ -103,7 +97,6 @@ json_path = os.path.join(os.environ.get('crypto_path'), 'Data/config.json')
 with open(json_path, 'r') as config_file:
     config = json.load(config_file)
 
-token_to_sell_or_buy = []
 coinmarketcap_api_key = config['coinmarketcap_api_key']
 binance_api_key = config['binance_api_key']
 binance_api_secret = config['binance_api_secret']
@@ -118,5 +111,3 @@ rewards = get_cumulative_total_rewards()
 auto_invest = get_auto_invest_amount()
 if token_prices is not None:
     update_excel_file(file_name, token_prices, rewards, auto_invest )
-    print(token_to_sell_or_buy)
-    input("Press Enter to continue...")
