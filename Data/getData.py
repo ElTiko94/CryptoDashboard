@@ -81,7 +81,7 @@ def getYellowCells(sheet, column_letter='B'):
 
     return yellow_cells
 
-def getGreenCells(sheet, column_letter='B'):
+def getGreenCells(sheet, column_letter='O'):
     Green_cells = []
 
     # Iterate through each cell in the specified column
