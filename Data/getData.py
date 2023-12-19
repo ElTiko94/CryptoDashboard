@@ -117,3 +117,4 @@ auto_invest = get_auto_invest_amount()
 if token_prices is not None:
     update_excel_file(file_name, token_prices, rewards, auto_invest )
     print(token_to_sell_or_buy)
+    input("Press Enter to continue...")
