@@ -11,24 +11,31 @@ from get_auto_invest_amount import get_auto_invest_amount
 
 green_sheets = []
 
-def get_crypto_prices(symbols, api_key):
+def get_crypto_prices(symbols, api_key, session):
     url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest'
     parameters = {'symbol': ','.join(symbols)}
     headers = {'Accepts': 'application/json', 'X-CMC_PRO_API_KEY': api_key}
 
-    session = Session()
+    # Update the session headers for this request
     session.headers.update(headers)
 
     try:
         response = session.get(url, params=parameters)
         data = json.loads(response.text)
+        if data.get('status', {}).get('error_code') != 0:
+            print(f"Error in API response: {data.get('status', {}).get('error_message')}")
+            return None
     except (ConnectionError, Timeout, TooManyRedirects) as e:
         print(e)
         return None
 
     prices = {}
     for symbol in symbols:
-        prices[symbol] = data["data"][symbol]["quote"]["USD"]["price"]
+        # Ensure the symbol exists in the response data
+        if symbol in data.get("data", {}):
+            prices[symbol] = data["data"][symbol]["quote"]["USD"]["price"]
+        else:
+            print(f"Price data for {symbol} not found in response.")
 
     return prices
 
@@ -105,7 +112,15 @@ tokens = ['BTC', 'ETH', 'ATLAS', 'POLIS', 'LUNC', 'LUNA', 'SOL', 'BNB', 'MATIC',
           'SHPING', 'XRP', 'DOT', 'LTC', 'TRX', 'ADA', 'ALGO', 'APE', 'AVAX', 'KAVA', 'DOGE', 'UNI', 'LINK', 'LDO',
           'ICP', 'SHIB', 'MINA', 'SEI','MEME','ACE','DYDX','TIA']
 
-token_prices = get_crypto_prices(tokens, coinmarketcap_api_key)
+
+# Create a session object
+session = Session()
+# Update session headers for persistent headers
+session.headers.update({'Your': 'Headers'})
+
+# Pass this session object to your functions
+token_prices = get_crypto_prices(tokens, coinmarketcap_api_key, session)
+
 
 rewards = get_cumulative_total_rewards()
 auto_invest = get_auto_invest_amount()
