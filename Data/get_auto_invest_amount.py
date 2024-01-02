@@ -8,24 +8,32 @@ plan_id_to_name = {
     7228590: "DCA5"
 }
 
-def get_plans_id(session):
-    url_path = '/sapi/v1/lending/auto-invest/plan/list'
-    response = send_signed_request('GET', url_path, session, {'size': 100})
-
-    if response.status_code == 200 and 'plans' in response.json():
-        return [plan['planId'] for plan in response.json()['plans']]
-    else:
-        print("Error in get_plans_id:", response.status_code, response.json())
-        return []
-
-def get_plan_details(plan_id,session):
-    url_path = '/sapi/v1/lending/auto-invest/plan/id'
-    response = send_signed_request('GET', url_path, session, {'size': 100, 'planId': plan_id})
+# Generic function for making API requests
+def make_api_request(session, url_path, payload={}):
+    response = send_signed_request('GET', url_path, session, payload)
 
     if response.status_code == 200:
         return response.json()
     else:
-        print("Error in get_plan_details:", response.status_code, response.json())
+        print("API request error:", response.status_code, response.json())
+        return None
+
+def get_plans_id(session):
+    url_path = '/sapi/v1/lending/auto-invest/plan/list'
+    response_data = make_api_request(session, url_path, {'size': 100})
+
+    if response_data and 'plans' in response_data:
+        return [plan['planId'] for plan in response_data['plans']]
+    else:
+        return []
+
+def get_plan_details(plan_id, session):
+    url_path = '/sapi/v1/lending/auto-invest/plan/id'
+    response_data = make_api_request(session, url_path, {'size': 100, 'planId': plan_id})
+
+    if response_data:
+        return response_data
+    else:
         return {}
 
 def get_auto_invest_amount(session):
