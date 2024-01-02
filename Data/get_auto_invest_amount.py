@@ -8,9 +8,9 @@ plan_id_to_name = {
     7228590: "DCA5"
 }
 
-def get_plans_id():
+def get_plans_id(session):
     url_path = '/sapi/v1/lending/auto-invest/plan/list'
-    response = send_signed_request('GET', url_path, {'size': 100})
+    response = send_signed_request('GET', url_path, session, {'size': 100})
 
     if response.status_code == 200 and 'plans' in response.json():
         return [plan['planId'] for plan in response.json()['plans']]
@@ -18,9 +18,9 @@ def get_plans_id():
         print("Error in get_plans_id:", response.status_code, response.json())
         return []
 
-def get_plan_details(plan_id):
+def get_plan_details(plan_id,session):
     url_path = '/sapi/v1/lending/auto-invest/plan/id'
-    response = send_signed_request('GET', url_path, {'size': 100, 'planId': plan_id})
+    response = send_signed_request('GET', url_path, session, {'size': 100, 'planId': plan_id})
 
     if response.status_code == 200:
         return response.json()
@@ -28,12 +28,12 @@ def get_plan_details(plan_id):
         print("Error in get_plan_details:", response.status_code, response.json())
         return {}
 
-def get_auto_invest_amount():
-    plan_ids = get_plans_id()
+def get_auto_invest_amount(session):
+    plan_ids = get_plans_id(session)
     plans = []
 
     for plan_id in plan_ids:
-        plan_details = get_plan_details(plan_id)
+        plan_details = get_plan_details(plan_id, session)
         plan = {"planId": plan_id_to_name.get(plan_id, plan_id), "details": []}
         for detail in plan_details.get("details", []):
             plan["details"].append({
@@ -44,6 +44,3 @@ def get_auto_invest_amount():
         plans.append(plan)
 
     return plans
-
-
-get_auto_invest_amount()

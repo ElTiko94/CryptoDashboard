@@ -1,4 +1,3 @@
-import requests
 import hmac
 import os
 import json
@@ -14,15 +13,15 @@ with open(json_path, 'r') as config_file:
 API_KEY = config['binance_api_key']
 API_SECRET = config['binance_api_secret']
 
-def get_server_time():
-    response = requests.get("https://api.binance.com/api/v1/time")
+def get_server_time(session):
+    response = session.get("https://api.binance.com/api/v1/time")
     if response.status_code == 200:
         return response.json()['serverTime']
     else:
         raise Exception("Could not get server time from Binance")
 
-def get_timestamp():
-    server_time = get_server_time()
+def get_timestamp(session):
+    server_time = get_server_time(session)
     local_time = int(time.time() * 1000)
     time_offset = local_time - server_time
     return local_time - time_offset
@@ -30,12 +29,12 @@ def get_timestamp():
 def create_signature(query_string, api_secret):
     return hmac.new(api_secret.encode('utf-8'), query_string.encode('utf-8'), hashlib.sha256).hexdigest()
 
-def send_signed_request(http_method, url_path, payload={}):
+def send_signed_request(http_method, url_path, session, payload={}):
     query_string = urlencode(payload, True)
     if query_string:
-        query_string = "{}&timestamp={}".format(query_string, get_timestamp())
+        query_string = "{}&timestamp={}".format(query_string, get_timestamp(session))
     else:
-        query_string = 'timestamp={}'.format(get_timestamp())
+        query_string = 'timestamp={}'.format(get_timestamp(session))
 
     signature = create_signature(query_string, API_SECRET)
     url = f'https://api.binance.com{url_path}?{query_string}&signature={signature}'
@@ -44,10 +43,10 @@ def send_signed_request(http_method, url_path, payload={}):
         'X-MBX-APIKEY': API_KEY
     }
 
-    response = requests.get(url, headers=headers) if http_method == 'GET' else None
+    response = session.get(url, headers=headers) if http_method == 'GET' else None
     return response
 
-def get_cumulative_total_rewards():
+def get_cumulative_total_rewards(session):
     url_path = '/sapi/v1/simple-earn/flexible/position'
     cumulative_rewards = {}
     current_page = 1
@@ -58,7 +57,7 @@ def get_cumulative_total_rewards():
             'size': 100,  # Set size to maximum (100) as per Binance API specification
             'current': current_page,  # Page number, starting from 1
         }
-        response = send_signed_request('GET', url_path, payload)
+        response = send_signed_request('GET', url_path, session, payload)
 
         if response.status_code == 200:
             data = response.json()
