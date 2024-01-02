@@ -1,6 +1,5 @@
 import json
 import os
-import re
 import openpyxl
 import datetime
 from requests import Request, Session
@@ -115,14 +114,12 @@ tokens = ['BTC', 'ETH', 'ATLAS', 'POLIS', 'LUNC', 'LUNA', 'SOL', 'BNB', 'MATIC',
 
 # Create a session object
 session = Session()
-# Update session headers for persistent headers
-session.headers.update({'Your': 'Headers'})
 
 # Pass this session object to your functions
 token_prices = get_crypto_prices(tokens, coinmarketcap_api_key, session)
 
 
-rewards = get_cumulative_total_rewards()
-auto_invest = get_auto_invest_amount()
+rewards = get_cumulative_total_rewards(session)
+auto_invest = get_auto_invest_amount(session)
 if token_prices is not None:
     update_excel_file(file_name, token_prices, rewards, auto_invest )
