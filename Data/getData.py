@@ -83,16 +83,6 @@ def getYellowCells(sheet, column_letter='B'):
 
     return yellow_cells
 
-def getGreenCells(sheet, column_letter='B'):
-    Green_cells = []
-
-    # Iterate through each cell in the specified column
-    for row in sheet[column_letter]:
-        if row.fill.start_color.index == 'FF00FF00':  # Yellow fill color in hex
-            Green_cells.append((row.row, row.column))
-            break
-
-    return Green_cells
 
 today = datetime.datetime.now()
 starAtlasJ0 = datetime.datetime(2021, 12, 17)
