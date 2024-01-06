@@ -6,6 +6,7 @@ from requests import Request, Session
 from requests.exceptions import ConnectionError, Timeout, TooManyRedirects
 from get_cumulative_total_rewards import get_cumulative_total_rewards
 from get_auto_invest_amount import get_auto_invest_amount
+import xlwings as xw
 
 
 green_sheets = []
@@ -46,14 +47,19 @@ def update_excel_file(file_name, token_prices,rewards, auto_invest):
     cell = sheet.cell(row=2, column=8)  # H2
     cell.value = int((today - starAtlasJ0).days)
 
-    # Update Tokens prices
+    
     for token, price in token_prices.items():
         sheet = excel_file[str(token)]
         cell = sheet.cell(row=3, column=10)  # J3
+        # Update Tokens prices
         cell.value = float(price)
+
+        # Add Functionality
+
+
         if token in rewards:
             cell = getYellowCells(sheet)
-            
+            print_valid_transactions(file_name, price, token)
             sheet.cell(row=cell[0][0], column=cell[0][1]).value = float(rewards[token])
 
     for plan in auto_invest:
@@ -65,6 +71,32 @@ def update_excel_file(file_name, token_prices,rewards, auto_invest):
 
     # Save changes
     excel_file.save(file_name)
+
+
+
+def print_valid_transactions(sheet_path, token_price, token):
+    app = xw.App(visible=False)
+    book = app.books.open(sheet_path)
+    sheet = book.sheets[token]  # Replace with your actual sheet name
+
+    row = 3
+    price_cell_value = sheet.range(f'O{row}').value
+
+    print(f'token : {token} price : {token_price}')
+    if price_cell_value is not None and float(price_cell_value) > float(token_price):
+        print(f"Buy {sheet.range(f'P{row}').value} of {token}")
+
+    for row in range(6, 200):
+        price_cell_value = sheet.range(f'O{row}').value
+        status_cell_value = sheet.range(f'Q{row}').value
+
+        if price_cell_value is not None and price_cell_value!= "Token Price" and status_cell_value != "Done":
+            if float(price_cell_value) < float(token_price):
+                print(f"Sell {sheet.range(f'P{row}').value}$ of {token}")
+
+    book.close()
+    app.quit()
+
 
 def getDCACell(sheet, planId, column_letter='E'):
     for row in sheet[column_letter]:
