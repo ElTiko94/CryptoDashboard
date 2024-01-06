@@ -82,7 +82,7 @@ def print_valid_transactions(sheet, token_price, token):
     row = 3
     price_cell_value = sheet.range(f'O{row}').value
 
-    print(f'token : {token} price : {float(token_price)}')
+    print(f'token : {token} price : {float(token_price)}$')
     if price_cell_value is not None and float(price_cell_value) > float(token_price):
         print(f"   Buy {sheet.range(f'N{row}').value} of {token} for {sheet.range(f'P{row}').value}$")
 
@@ -146,3 +146,4 @@ rewards = get_cumulative_total_rewards(session)
 auto_invest = get_auto_invest_amount(session)
 if token_prices is not None:
     update_excel_file(file_name, token_prices, rewards, auto_invest )
+    input("Press Enter to close the Excel workbook...")
