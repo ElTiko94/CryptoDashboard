@@ -47,6 +47,8 @@ def update_excel_file(file_name, token_prices,rewards, auto_invest):
     cell = sheet.cell(row=2, column=8)  # H2
     cell.value = int((today - starAtlasJ0).days)
 
+    app = xw.App(visible=False)
+    book = app.books.open(file_name)
     
     for token, price in token_prices.items():
         sheet = excel_file[str(token)]
@@ -54,13 +56,15 @@ def update_excel_file(file_name, token_prices,rewards, auto_invest):
         # Update Tokens prices
         cell.value = float(price)
 
-        # Add Functionality
-
+        sheet_xw = book.sheets[token]
 
         if token in rewards:
             cell = getYellowCells(sheet)
-            print_valid_transactions(file_name, price, token)
+            print_valid_transactions(sheet_xw, price, token)
             sheet.cell(row=cell[0][0], column=cell[0][1]).value = float(rewards[token])
+    
+    book.close()
+    app.quit()
 
     for plan in auto_invest:
         for detail in plan["details"]:
@@ -74,28 +78,25 @@ def update_excel_file(file_name, token_prices,rewards, auto_invest):
 
 
 
-def print_valid_transactions(sheet_path, token_price, token):
-    app = xw.App(visible=False)
-    book = app.books.open(sheet_path)
-    sheet = book.sheets[token]  # Replace with your actual sheet name
-
+def print_valid_transactions(sheet, token_price, token):
     row = 3
     price_cell_value = sheet.range(f'O{row}').value
 
-    print(f'token : {token} price : {token_price}')
+    print(f'token : {token} price : {float(token_price)}')
     if price_cell_value is not None and float(price_cell_value) > float(token_price):
-        print(f"Buy {sheet.range(f'P{row}').value} of {token}")
+        print(f"   Buy {sheet.range(f'N{row}').value} of {token} for {sheet.range(f'P{row}').value}$")
 
-    for row in range(6, 200):
-        price_cell_value = sheet.range(f'O{row}').value
-        status_cell_value = sheet.range(f'Q{row}').value
+    if token != 'ETH' and token != 'BTC' : 
+        for row in range(6, 200):
+            price_cell_value = sheet.range(f'O{row}').value
+            status_cell_value = sheet.range(f'Q{row}').value
 
-        if price_cell_value is not None and price_cell_value!= "Token Price" and status_cell_value != "Done":
-            if float(price_cell_value) < float(token_price):
-                print(f"Sell {sheet.range(f'P{row}').value}$ of {token}")
-
-    book.close()
-    app.quit()
+            if price_cell_value is not None and price_cell_value!= "Token Price" and status_cell_value != "Done":
+                if float(price_cell_value) < float(token_price) and token != "SHIB":
+                    print(f"   Sell {sheet.range(f'N{row}').value} of {token} for {sheet.range(f'P{row}').value}$ ")
+                elif (token == "SHIB") :
+                    if float(sheet.range(f'P{row}').value)/sheet.range(f'N{row}').value < float(token_price):
+                        print(f"   Sell {sheet.range(f'N{row}').value} of {token} for {sheet.range(f'P{row}').value}$ ")
 
 
 def getDCACell(sheet, planId, column_letter='E'):
