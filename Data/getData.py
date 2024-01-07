@@ -120,9 +120,11 @@ def getYellowCells(sheet, column_letter='B'):
 
 today = datetime.datetime.now()
 starAtlasJ0 = datetime.datetime(2021, 12, 17)
-file_name = r"C:\Users\Tiko\Desktop\Tiko\investissement\Gestion de crypto\Data\Historique d'achats.xlsx"
 
-json_path = os.path.join(os.environ.get('crypto_path'), 'Data/config.json')
+crypto_path = os.environ.get('crypto_path')
+file_name = os.path.join(crypto_path, "Data/Historique d'achats.xlsx")
+
+json_path = os.path.join(crypto_path, 'Data/config.json')
 
 with open(json_path, 'r') as config_file:
     config = json.load(config_file)
@@ -131,7 +133,7 @@ coinmarketcap_api_key = config['coinmarketcap_api_key']
 binance_api_key = config['binance_api_key']
 binance_api_secret = config['binance_api_secret']
 
-tokens = ['BTC', 'ETH', 'ATLAS', 'POLIS', 'LUNC', 'LUNA', 'SOL', 'BNB', 'MATIC', 'ATOM', 'EGLD', 'NEAR', 'GRT', 'AMP',
+tokens = ['BTC', 'ETH', 'SOL', 'ATLAS', 'BNB', 'POLIS', 'LUNC', 'LUNA', 'MATIC', 'ATOM', 'EGLD', 'NEAR', 'GRT', 'AMP',
           'SHPING', 'XRP', 'DOT', 'LTC', 'TRX', 'ADA', 'ALGO', 'APE', 'AVAX', 'KAVA', 'DOGE', 'UNI', 'LINK', 'LDO',
           'ICP', 'SHIB', 'MINA', 'SEI','MEME','ACE','DYDX','TIA']
 
@@ -150,7 +152,7 @@ if token_prices is not None:
 
 
 # Path to your bash script
-batch_script = os.path.join(os.environ.get('crypto_path'), 'Data/Open_excel.bat')
+batch_script = os.path.join(crypto_path, 'Data/Open_excel.bat')
 
 # Run the script
 subprocess.run([batch_script], shell=True)
