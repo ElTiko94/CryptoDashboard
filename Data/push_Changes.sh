@@ -7,5 +7,5 @@ git add "Data\get_auto_invest_amount.py"
 git add "Data\push_Changes.sh"
 git add "Vision General.bat"
 git add "README.md"
-git commit -m "Update Excel files"
+git commit -m "Automatic push"
 git push -u origin main
