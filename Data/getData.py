@@ -150,7 +150,7 @@ if token_prices is not None:
 
 
 # Path to your bash script
-batch_script = os.path.join(os.environ.get('crypto_path'), 'Data/Start_excel.bat')
+batch_script = os.path.join(os.environ.get('crypto_path'), 'Data/Open_excel.bat')
 
 # Run the script
 subprocess.run([batch_script], shell=True)

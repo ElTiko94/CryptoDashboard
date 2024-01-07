@@ -8,7 +8,7 @@ set VISION_GENERAL="C:\Users\Tiko\Desktop\Tiko\investissement\Gestion de crypto\
 rem Exécuter getData.py
 echo Exécution de getData.py...
 start "getData.py" %DATA_PY%
-TIMEOUT 20
+TIMEOUT 90
 
 rem Pousser les modif sur git
 "C:\Program Files\Git\git-bash.exe" "C:\Users\Tiko\Desktop\Tiko\investissement\Gestion de crypto\Data\push_Changes.sh"
