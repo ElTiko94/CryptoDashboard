@@ -149,7 +149,7 @@ rewards = get_cumulative_total_rewards(session)
 auto_invest = get_auto_invest_amount(session)
 if token_prices is not None:
     update_excel_file(file_name, token_prices, rewards, auto_invest )
-
+    print("\n")
 
 # Path to your bash script
 batch_script = os.path.join(crypto_path, 'Data/Open_excel.bat')
@@ -157,4 +157,4 @@ batch_script = os.path.join(crypto_path, 'Data/Open_excel.bat')
 # Run the script
 subprocess.run([batch_script], shell=True)
 
-input("Press Enter to close the Excel workbook...")
+input("\nPress Enter to close the Excel workbook...")
