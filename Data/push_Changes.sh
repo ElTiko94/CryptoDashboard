@@ -8,4 +8,4 @@ git add "Data\push_Changes.sh"
 git add "Vision General.bat"
 git add "README.md"
 git commit -m "Automatic push"
-git push -u origin main
+git push
