@@ -5,7 +5,6 @@ plan_id_to_name = {
     2202830: "DCA2",
     2985282: "DCA3",
     3068471: "DCA4",
-    7228590: "DCA5"
 }
 
 # Generic function for making API requests
