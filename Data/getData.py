@@ -94,7 +94,7 @@ def print_valid_transactions(sheet, token_price, token):
 
             if price_cell_value is not None and price_cell_value!= "Token Price" and status_cell_value != "Done":
                 if float(price_cell_value) < float(token_price) and token != "SHIB":
-                    print(f"   Sell {sheet.range(f'N{row}').value} of {token} for {sheet.range(f'P{row}').value}$ ")
+                    print(f"     Sell {sheet.range(f'N{row}').value} of {token} for {sheet.range(f'P{row}').value}$ ")
                 elif (token == "SHIB") :
                     if float(sheet.range(f'P{row}').value)/sheet.range(f'N{row}').value < float(token_price):
                         print(f"     Sell {sheet.range(f'N{row}').value} of {token} for {sheet.range(f'P{row}').value}$ ")
