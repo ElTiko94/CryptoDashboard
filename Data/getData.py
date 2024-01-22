@@ -59,9 +59,10 @@ def update_excel_file(file_name, token_prices,rewards, auto_invest):
 
         sheet_xw = book.sheets[token]
 
+        print_valid_transactions(sheet_xw, price, token)
+
         if token in rewards:
             cell = getYellowCells(sheet)
-            print_valid_transactions(sheet_xw, price, token)
             sheet.cell(row=cell[0][0], column=cell[0][1]).value = float(rewards[token])
     
     book.close()
