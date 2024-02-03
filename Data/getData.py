@@ -1,13 +1,14 @@
 import json
-import os
-import openpyxl
+from os import environ, path
+import subprocess
 import datetime
-from requests import Request, Session
+import openpyxl
+from requests import Session
 from requests.exceptions import ConnectionError, Timeout, TooManyRedirects
+import xlwings as xw
 from get_cumulative_total_rewards import get_cumulative_total_rewards
 from get_auto_invest_amount import get_auto_invest_amount
-import xlwings as xw
-import subprocess
+
 
 
 green_sheets = []
@@ -50,7 +51,7 @@ def update_excel_file(file_name, token_prices,rewards, auto_invest):
 
     app = xw.App(visible=False)
     book = app.books.open(file_name)
-    
+
     for token, price in token_prices.items():
         sheet = excel_file[str(token)]
         cell = sheet.cell(row=3, column=10)  # J3
@@ -62,16 +63,16 @@ def update_excel_file(file_name, token_prices,rewards, auto_invest):
         print_valid_transactions(sheet_xw, price, token)
 
         if token in rewards:
-            cell = getYellowCells(sheet)
+            cell = get_yellow_cells(sheet)
             sheet.cell(row=cell[0][0], column=cell[0][1]).value = float(rewards[token])
-    
+
     book.close()
     app.quit()
 
     for plan in auto_invest:
         for detail in plan["details"]:
             sheet = excel_file[str(detail['targetAsset'])]
-            cell_row = getDCACell(sheet, plan['planId'])
+            cell_row = get_dca_cell(sheet, plan['planId'])
             sheet.cell(row=cell_row, column=2).value = float(detail['purchasedAmount'])
             sheet.cell(row=cell_row, column=4).value = float(detail['totalInvestedInUSD'])
 
@@ -83,12 +84,12 @@ def update_excel_file(file_name, token_prices,rewards, auto_invest):
 def print_valid_transactions(sheet, token_price, token):
     row = 3
     price_cell_value = sheet.range(f'O{row}').value
-    
+
     print(f'token : {token} price : {float(token_price)}$')
     if price_cell_value is not None and float(price_cell_value) > float(token_price):
         print(f"     Buy {sheet.range(f'N{row}').value} of {token} for {sheet.range(f'P{row}').value}$")
-        
-    if token != 'ETH' and token != 'BTC' : 
+
+    if token not in ['ETH','BTC'] :
         for row in range(6, 200):
             price_cell_value = sheet.range(f'O{row}').value
             status_cell_value = sheet.range(f'Q{row}').value
@@ -101,13 +102,13 @@ def print_valid_transactions(sheet, token_price, token):
                         print(f"     Sell {sheet.range(f'N{row}').value} of {token} for {sheet.range(f'P{row}').value}$ ")
 
 
-def getDCACell(sheet, planId, column_letter='E'):
+def get_dca_cell(sheet, plan_id, column_letter='E'):
     for row in sheet[column_letter]:
-        if row.value == planId:
+        if row.value == plan_id:
             return row.row
     return None
 
-def getYellowCells(sheet, column_letter='B'):
+def get_yellow_cells(sheet, column_letter='B'):
     yellow_cells = []
 
     # Iterate through each cell in the specified column
@@ -122,10 +123,10 @@ def getYellowCells(sheet, column_letter='B'):
 today = datetime.datetime.now()
 starAtlasJ0 = datetime.datetime(2021, 12, 17)
 
-crypto_path = os.environ.get('crypto_path')
-file_name = os.path.join(crypto_path, "Data/Historique d'achats.xlsx")
+crypto_path = environ.get('crypto_path')
+file_name = path.join(crypto_path, "Data/Historique d'achats.xlsx")
 
-json_path = os.path.join(crypto_path, 'Data/config.json')
+json_path = path.join(crypto_path, 'Data/config.json')
 
 with open(json_path, 'r') as config_file:
     config = json.load(config_file)
@@ -153,7 +154,7 @@ if token_prices is not None:
     print("\n")
 
 # Path to your bash script
-batch_script = os.path.join(crypto_path, 'Data/Open_excel.bat')
+batch_script = path.join(crypto_path, 'Data/Open_excel.bat')
 
 # Run the script
 subprocess.run([batch_script], shell=True)

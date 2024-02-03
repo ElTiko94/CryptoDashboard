@@ -72,7 +72,6 @@ def get_cumulative_total_rewards(session):
             print("Error:", response.status_code)
             print(response.json())
             break
-    
+
     return cumulative_rewards
-
-
+    
