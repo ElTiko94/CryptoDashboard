@@ -11,8 +11,6 @@ from get_auto_invest_amount import get_auto_invest_amount
 
 
 
-green_sheets = []
-
 def get_crypto_prices(symbols, api_key, session):
     url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest'
     parameters = {'symbol': ','.join(symbols)}
@@ -119,44 +117,42 @@ def get_yellow_cells(sheet, column_letter='B'):
 
     return yellow_cells
 
+if __name__ == "__main__" :
 
-today = datetime.datetime.now()
-starAtlasJ0 = datetime.datetime(2021, 12, 17)
+    today = datetime.datetime.now()
+    starAtlasJ0 = datetime.datetime(2021, 12, 17)
 
-crypto_path = environ.get('crypto_path')
-file_name = path.join(crypto_path, "Data/Historique d'achats.xlsx")
+    crypto_path = environ.get('crypto_path')
+    file_name = path.join(crypto_path, "Data/Historique d'achats.xlsx")
 
-json_path = path.join(crypto_path, 'Data/config.json')
+    json_path = path.join(crypto_path, 'Data/config.json')
 
-with open(json_path, 'r') as config_file:
-    config = json.load(config_file)
+    with open(json_path, 'r') as config_file:
+        config = json.load(config_file)
 
-coinmarketcap_api_key = config['coinmarketcap_api_key']
-binance_api_key = config['binance_api_key']
-binance_api_secret = config['binance_api_secret']
-
-tokens = ['BTC', 'ETH', 'SOL', 'ATLAS', 'BNB', 'POLIS', 'LUNC', 'LUNA', 'MATIC', 'ATOM', 'EGLD', 'NEAR', 'GRT', 'AMP',
-          'SHPING', 'XRP', 'DOT', 'LTC', 'TRX', 'ADA', 'ALGO', 'APE', 'AVAX', 'KAVA', 'DOGE', 'UNI', 'LINK', 'LDO',
-          'ICP', 'SHIB', 'MINA', 'SEI','MEME','ACE','DYDX','TIA']
+    coinmarketcap_api_key = config['coinmarketcap_api_key']
+    binance_api_key = config['binance_api_key']
+    binance_api_secret = config['binance_api_secret']
+    tokens = config['tokens']
 
 
-# Create a session object
-session = Session()
+    # Create a session object
+    session = Session()
 
-# Pass this session object to your functions
-token_prices = get_crypto_prices(tokens, coinmarketcap_api_key, session)
+    # Pass this session object to your functions
+    token_prices = get_crypto_prices(tokens, coinmarketcap_api_key, session)
 
 
-rewards = get_cumulative_total_rewards(session)
-auto_invest = get_auto_invest_amount(session)
-if token_prices is not None:
-    update_excel_file(file_name, token_prices, rewards, auto_invest )
-    print("\n")
+    rewards = get_cumulative_total_rewards(session)
+    auto_invest = get_auto_invest_amount(session)
+    if token_prices is not None:
+        update_excel_file(file_name, token_prices, rewards, auto_invest )
+        print("\n")
 
-# Path to your bash script
-batch_script = path.join(crypto_path, 'Data/Open_excel.bat')
+    # Path to your bash script
+    batch_script = path.join(crypto_path, 'Data/Open_excel.bat')
 
-# Run the script
-subprocess.run([batch_script], shell=True)
+    # Run the script
+    subprocess.run([batch_script], shell=True)
 
-input("\nPress Enter to close the Excel workbook...")
+    input("\nPress Enter to close the Excel workbook...")
