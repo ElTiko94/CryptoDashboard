@@ -10,6 +10,44 @@ from get_cumulative_total_rewards import get_cumulative_total_rewards
 from get_auto_invest_amount import get_auto_invest_amount
 
 
+def main():
+    today = datetime.datetime.now()
+    starAtlasJ0 = datetime.datetime(2021, 12, 17)
+
+    crypto_path = environ.get('crypto_path')
+    file_name = path.join(crypto_path, "Data/Historique d'achats.xlsx")
+
+    json_path = path.join(crypto_path, 'Data/config.json')
+
+    with open(json_path) as config_file:
+        config = json.load(config_file)
+
+    coinmarketcap_api_key = config['coinmarketcap_api_key']
+    binance_api_key = config['binance_api_key']
+    binance_api_secret = config['binance_api_secret']
+    tokens = config['tokens']
+
+
+    # Create a session object
+    session = Session()
+
+    # dict : token_prices[token]
+    token_prices = get_crypto_prices(tokens, coinmarketcap_api_key, session)
+
+
+    rewards = get_cumulative_total_rewards(session, binance_api_key, binance_api_secret)
+    auto_invest = get_auto_invest_amount(session, binance_api_key, binance_api_secret)
+    if token_prices is not None:
+        update_excel_file(file_name, token_prices, rewards, auto_invest, int((today - starAtlasJ0).days) )
+        print("")
+
+    # Path to your bash script
+    batch_script = path.join(crypto_path, 'Data/Open_excel.bat')
+
+    # Run the script
+    subprocess.run([batch_script], shell=True)
+
+    input("\nPress Enter to close the Excel workbook...")
 
 def get_crypto_prices(symbols, api_key, session):
     url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest'
@@ -39,13 +77,13 @@ def get_crypto_prices(symbols, api_key, session):
 
     return prices
 
-def update_excel_file(file_name, token_prices,rewards, auto_invest):
+def update_excel_file(file_name, token_prices,rewards, auto_invest, days):
     excel_file = openpyxl.load_workbook(file_name)
 
     # Update Star Atlas number of Stacking days
     sheet = excel_file['ATLAS']
     cell = sheet.cell(row=2, column=8)  # H2
-    cell.value = int((today - starAtlasJ0).days)
+    cell.value = days
 
     app = xw.App(visible=False)
     book = app.books.open(file_name)
@@ -77,8 +115,6 @@ def update_excel_file(file_name, token_prices,rewards, auto_invest):
     # Save changes
     excel_file.save(file_name)
 
-
-
 def print_valid_transactions(sheet, token_price, token):
     row = 3
     price_cell_value = sheet.range(f'O{row}').value
@@ -99,7 +135,6 @@ def print_valid_transactions(sheet, token_price, token):
                     if float(sheet.range(f'P{row}').value)/sheet.range(f'N{row}').value < float(token_price):
                         print(f"     Sell {sheet.range(f'N{row}').value} of {token} for {sheet.range(f'P{row}').value}$ ")
 
-
 def get_dca_cell(sheet, plan_id, column_letter='E'):
     for row in sheet[column_letter]:
         if row.value == plan_id:
@@ -118,41 +153,4 @@ def get_yellow_cells(sheet, column_letter='B'):
     return yellow_cells
 
 if __name__ == "__main__" :
-
-    today = datetime.datetime.now()
-    starAtlasJ0 = datetime.datetime(2021, 12, 17)
-
-    crypto_path = environ.get('crypto_path')
-    file_name = path.join(crypto_path, "Data/Historique d'achats.xlsx")
-
-    json_path = path.join(crypto_path, 'Data/config.json')
-
-    with open(json_path, 'r') as config_file:
-        config = json.load(config_file)
-
-    coinmarketcap_api_key = config['coinmarketcap_api_key']
-    binance_api_key = config['binance_api_key']
-    binance_api_secret = config['binance_api_secret']
-    tokens = config['tokens']
-
-
-    # Create a session object
-    session = Session()
-
-    # Pass this session object to your functions
-    token_prices = get_crypto_prices(tokens, coinmarketcap_api_key, session)
-
-
-    rewards = get_cumulative_total_rewards(session)
-    auto_invest = get_auto_invest_amount(session)
-    if token_prices is not None:
-        update_excel_file(file_name, token_prices, rewards, auto_invest )
-        print("\n")
-
-    # Path to your bash script
-    batch_script = path.join(crypto_path, 'Data/Open_excel.bat')
-
-    # Run the script
-    subprocess.run([batch_script], shell=True)
-
-    input("\nPress Enter to close the Excel workbook...")
+    main()
