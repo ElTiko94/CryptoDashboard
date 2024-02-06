@@ -44,7 +44,8 @@ Navigate to the crypto_path/Data of the project and create a file named `config.
 {
   "coinmarketcap_api_key": "your_coinmarketcap_api_key",
   "binance_api_key": "your_binance_api_key",
-  "binance_api_secret": "your_secret_binance_api_key"
+  "binance_api_secret": "your_secret_binance_api_key",
+  "tokens" : ["BTC", "ETH", "SOL", "etc"]
 }
 ```
 
