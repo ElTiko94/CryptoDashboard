@@ -11,7 +11,8 @@ from get_auto_invest_amount import get_auto_invest_amount
 
 
 def main():
-    today = datetime.datetime.now()
+    #today = datetime.datetime.now()
+    today = datetime.datetime(2024, 1, 1)
     starAtlasJ0 = datetime.datetime(2021, 12, 17)
 
     crypto_path = environ.get('crypto_path')
