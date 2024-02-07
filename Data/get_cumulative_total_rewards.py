@@ -36,8 +36,7 @@ def send_signed_request(http_method, url_path, session, API_KEY, API_SECRET,payl
         'X-MBX-APIKEY': API_KEY
     }
 
-    response = session.get(url, headers=headers) if http_method == 'GET' else None
-    return response
+    return session.get(url, headers=headers) if http_method == 'GET' else None
 
 def get_cumulative_total_rewards(session, API_KEY, API_SECRET):
     url_path = '/sapi/v1/simple-earn/flexible/position'
