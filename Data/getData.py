@@ -1,5 +1,6 @@
 import json
 from os import environ, path
+import sys
 import subprocess
 import datetime
 import openpyxl
@@ -32,15 +33,22 @@ def main():
     # Create a session object
     session = Session()
 
-    # dict : token_prices[token]
-    token_prices = get_crypto_prices(tokens, coinmarketcap_api_key, session)
-
-
     rewards = get_cumulative_total_rewards(session, binance_api_key, binance_api_secret)
     auto_invest = get_auto_invest_amount(session, binance_api_key, binance_api_secret)
-    if token_prices is not None:
-        update_excel_file(file_name, token_prices, rewards, auto_invest, int((today - starAtlasJ0).days) )
-        print("")
+
+    while True :
+        # dict : token_prices[token]
+        token_prices = get_crypto_prices(tokens, coinmarketcap_api_key, session)
+
+
+        if token_prices is not None:
+            update_excel_file(file_name, token_prices, rewards, auto_invest, int((today - starAtlasJ0).days) )
+            print("")
+        if int( sys.argv[1] ) == 0 :
+            break
+        elif redo := input("\nPress any key to Redo, or press 'N' to stop ? ") :
+            if redo.upper() == 'N':
+                break
 
     # Path to your bash script
     batch_script = path.join(crypto_path, 'Data/Open_excel.bat')
