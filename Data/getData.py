@@ -138,6 +138,7 @@ def print_valid_transactions(sheet, token_price, token):
     print(f'token : {token} price : {float(token_price)}$')
     if price_cell_value is not None and float(price_cell_value) > float(token_price):
         print(f"     Buy {sheet.range(f'N{row}').value} of {token} for {sheet.range(f'P{row}').value}$")
+        return None
 
     if token not in ['ETH','BTC'] :
         for row in range(6, 200):
@@ -147,9 +148,11 @@ def print_valid_transactions(sheet, token_price, token):
             if price_cell_value is not None and price_cell_value!= "Token Price" and status_cell_value != "Done":
                 if float(price_cell_value) < float(token_price) and token != "SHIB":
                     print(f"     Sell {sheet.range(f'N{row}').value} of {token} for {sheet.range(f'P{row}').value}$ ")
+                    return None
                 elif (token == "SHIB") :
                     if float(sheet.range(f'P{row}').value)/sheet.range(f'N{row}').value < float(token_price):
                         print(f"     Sell {sheet.range(f'N{row}').value} of {token} for {sheet.range(f'P{row}').value}$ ")
+                        return None
 
 def get_dca_cell(sheet, plan_id, column_letter='E'):
     for row in sheet[column_letter]:
