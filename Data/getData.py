@@ -44,7 +44,14 @@ def main():
         if token_prices is not None:
             update_excel_file(file_name, token_prices, rewards, auto_invest, int((today - starAtlasJ0).days) )
             print("")
-        if int( sys.argv[1] ) == 0 :
+        
+        try :
+            loop = int( sys.argv[1] )
+            
+        except IndexError :
+            loop = 0
+
+        if loop == 0 :
             break
         elif redo := input("\nPress any key to Redo, or press 'N' to stop ? ") :
             if redo.upper() == 'N':
