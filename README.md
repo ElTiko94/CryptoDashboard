@@ -22,7 +22,7 @@ What you need to install the software and how to install them:
 If you have Git installed, clone the repository using:
 
 ```bash
-git clone https://github.com/yourusername/CryptoDashboard.git
+git clone https://github.com/ElTiko94/CryptoDashboard.git
 ```
 
 Alternatively, you can download the source code directly from the repository page.
