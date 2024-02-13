@@ -7,8 +7,7 @@ import openpyxl
 from requests import Session
 from requests.exceptions import ConnectionError, Timeout, TooManyRedirects
 import xlwings as xw
-from get_cumulative_total_rewards import get_cumulative_total_rewards
-from get_auto_invest_amount import get_auto_invest_amount
+from binance_getter import get_cumulative_total_rewards, get_auto_invest_amount
 
 
 def main():
@@ -28,13 +27,13 @@ def main():
     binance_api_key = config['binance_api_key']
     binance_api_secret = config['binance_api_secret']
     tokens = config['tokens']
-
+    plan_id_to_name = config['plan_id_to_name']
 
     # Create a session object
     session = Session()
 
     rewards = get_cumulative_total_rewards(session, binance_api_key, binance_api_secret)
-    auto_invest = get_auto_invest_amount(session, binance_api_key, binance_api_secret)
+    auto_invest = get_auto_invest_amount(session, binance_api_key, binance_api_secret, plan_id_to_name)
 
     while True :
         # dict : token_prices[token]
