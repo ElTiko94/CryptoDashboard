@@ -1,30 +1,30 @@
-from binance_api import make_api_request, send_signed_request
+from binance_api import make_api_request
 
 
 
-def get_plans_id(session, API_KEY, API_SECRET):
+def get_plans_id(session, api_key, api_secret):
     url_path = '/sapi/v1/lending/auto-invest/plan/list'
-    response_data = make_api_request(session, url_path, API_KEY, API_SECRET, {'size': 100})
+    response_data = make_api_request(session, url_path, api_key, api_secret, {'size': 100})
 
     if response_data and 'plans' in response_data:
         return [plan['planId'] for plan in response_data['plans']]
-    else:
-        return []
 
-def get_plan_details(plan_id, session, API_KEY, API_SECRET):
+    return []
+
+def get_plan_details(plan_id, session, api_key, api_secret):
     url_path = '/sapi/v1/lending/auto-invest/plan/id'
-    response_data = make_api_request(session, url_path, API_KEY, API_SECRET, {'size': 100, 'planId': plan_id})
+    response_data = make_api_request(session, url_path, api_key, api_secret, {'size': 100, 'planId': plan_id})
 
     if response_data:
         return response_data
-    else:
-        return {}
 
-def get_auto_invest_amount(session, API_KEY, API_SECRET, plan_id_to_name):
-    plan_ids = get_plans_id(session, API_KEY, API_SECRET)
+    return {}
+
+def get_auto_invest_amount(session, api_key, api_secret, plan_id_to_name):
+    plan_ids = get_plans_id(session, api_key, api_secret)
     plans = []
     for plan_id in plan_ids:
-        plan_details = get_plan_details(plan_id, session, API_KEY, API_SECRET)
+        plan_details = get_plan_details(plan_id, session, api_key, api_secret)
         plan = {"planId": plan_id_to_name[str(plan_id)], "details": []}
 
         for detail in plan_details.get("details", []):
@@ -37,7 +37,7 @@ def get_auto_invest_amount(session, API_KEY, API_SECRET, plan_id_to_name):
 
     return plans
 
-def get_cumulative_total_rewards(session, API_KEY, API_SECRET):
+def get_cumulative_total_rewards(session, api_key, api_secret):
     url_path = '/sapi/v1/simple-earn/flexible/position'
     cumulative_rewards = {}
     current_page = 1
@@ -49,9 +49,9 @@ def get_cumulative_total_rewards(session, API_KEY, API_SECRET):
             'current': current_page,  # Page number, starting from 1
         }
 
-        data = make_api_request(session, url_path, API_KEY, API_SECRET, payload)
+        data = make_api_request(session, url_path, api_key, api_secret, payload)
 
-        if data != None:
+        if data is not None:
             rows = data.get('rows', [])
             for row in rows:
                 asset = row.get('asset')
@@ -60,8 +60,7 @@ def get_cumulative_total_rewards(session, API_KEY, API_SECRET):
             has_more = len(rows) == 100
             current_page += 1
         else:
-            print("Error:", response.status_code)
-            print(response.json())
+            print("Error:",data)
             break
 
     return cumulative_rewards

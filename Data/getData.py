@@ -27,13 +27,13 @@ def main():
     binance_api_key = config['binance_api_key']
     binance_api_secret = config['binance_api_secret']
     tokens = config['tokens']
-    plan_id_to_name = config['plan_id_to_name']
+    plan_id = config['plan_id_to_name']
 
     # Create a session object
     session = Session()
 
     rewards = get_cumulative_total_rewards(session, binance_api_key, binance_api_secret)
-    auto_invest = get_auto_invest_amount(session, binance_api_key, binance_api_secret, plan_id_to_name)
+    auto_invest = get_auto_invest_amount(session, binance_api_key, binance_api_secret, plan_id)
 
     while True :
         # dict : token_prices[token]
@@ -41,12 +41,13 @@ def main():
 
 
         if token_prices is not None:
-            update_excel_file(file_name, token_prices, rewards, auto_invest, int((today - starAtlasJ0).days) )
+            star_atlas_days = int((today - starAtlasJ0).days)
+            update_excel_file(file_name, token_prices, rewards, auto_invest, star_atlas_days)
             print("")
-        
+
         try :
             loop = int( sys.argv[1] )
-            
+
         except IndexError :
             loop = 0
 
