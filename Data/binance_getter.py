@@ -48,10 +48,10 @@ def get_cumulative_total_rewards(session, API_KEY, API_SECRET):
             'size': 100,  # Set size to maximum (100) as per Binance API specification
             'current': current_page,  # Page number, starting from 1
         }
-        response = send_signed_request('GET', url_path, session, API_KEY, API_SECRET, payload)
 
-        if response.status_code == 200:
-            data = response.json()
+        data = make_api_request(session, url_path, API_KEY, API_SECRET, payload)
+
+        if data != None:
             rows = data.get('rows', [])
             for row in rows:
                 asset = row.get('asset')
