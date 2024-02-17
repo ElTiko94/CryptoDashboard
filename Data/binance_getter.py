@@ -20,7 +20,7 @@ def get_plan_details(plan_id, session, api_key, api_secret):
 
     return {}
 
-def get_auto_invest_amount(session, api_key, api_secret, plan_id_to_name):
+def get_auto_invest(session, api_key, api_secret, plan_id_to_name):
     plan_ids = get_plans_id(session, api_key, api_secret)
     plans = []
     for plan_id in plan_ids:

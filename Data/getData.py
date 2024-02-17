@@ -5,43 +5,38 @@ import subprocess
 import datetime
 import openpyxl
 from requests import Session
-from requests.exceptions import ConnectionError, Timeout, TooManyRedirects
+from requests.exceptions import Timeout, TooManyRedirects
 import xlwings as xw
-from binance_getter import get_cumulative_total_rewards, get_auto_invest_amount
+from binance_getter import get_cumulative_total_rewards, get_auto_invest
 
 
 def main():
     #today = datetime.datetime.now()
     today = datetime.datetime(2024, 1, 1)
-    starAtlasJ0 = datetime.datetime(2021, 12, 17)
+    star_atlas_j0 = datetime.datetime(2021, 12, 17)
 
     crypto_path = environ.get('crypto_path')
     file_name = path.join(crypto_path, "Data/Historique d'achats.xlsx")
 
-    json_path = path.join(crypto_path, 'Data/config.json')
-
-    with open(json_path) as config_file:
+    with open(path.join(crypto_path, 'Data/config.json')) as config_file:
         config = json.load(config_file)
 
-    coinmarketcap_api_key = config['coinmarketcap_api_key']
     binance_api_key = config['binance_api_key']
     binance_api_secret = config['binance_api_secret']
-    tokens = config['tokens']
-    plan_id = config['plan_id_to_name']
 
     # Create a session object
     session = Session()
 
     rewards = get_cumulative_total_rewards(session, binance_api_key, binance_api_secret)
-    auto_invest = get_auto_invest_amount(session, binance_api_key, binance_api_secret, plan_id)
+    auto_invest = get_auto_invest(session, binance_api_key, binance_api_secret, config['plan_id_to_name'])
 
     while True :
         # dict : token_prices[token]
-        token_prices = get_crypto_prices(tokens, coinmarketcap_api_key, session)
+        token_prices = get_crypto_prices(config['tokens'], config['coinmarketcap_api_key'], session)
 
 
         if token_prices is not None:
-            star_atlas_days = int((today - starAtlasJ0).days)
+            star_atlas_days = int((today - star_atlas_j0).days)
             update_excel_file(file_name, token_prices, rewards, auto_invest, star_atlas_days)
             print("")
 
@@ -53,7 +48,7 @@ def main():
 
         if loop == 0 :
             break
-        elif redo := input("\nPress any key to Redo, or press 'N' to stop ? ") :
+        if redo := input("\nPress any key to Redo, or press 'N' to stop ? ") :
             if redo.upper() == 'N':
                 break
 
@@ -97,8 +92,7 @@ def update_excel_file(file_name, token_prices,rewards, auto_invest, days):
     excel_file = openpyxl.load_workbook(file_name)
 
     # Update Star Atlas number of Stacking days
-    sheet = excel_file['ATLAS']
-    cell = sheet.cell(row=2, column=8)  # H2
+    cell = excel_file['ATLAS'].cell(row=2, column=8)  # H2
     cell.value = days
 
     app = xw.App(visible=False)
@@ -110,9 +104,7 @@ def update_excel_file(file_name, token_prices,rewards, auto_invest, days):
         # Update Tokens prices
         cell.value = float(price)
 
-        sheet_xw = book.sheets[token]
-
-        print_valid_transactions(sheet_xw, price, token)
+        print_valid_transactions(book.sheets[token], price, token)
 
         if token in rewards:
             cell = get_yellow_cells(sheet)
@@ -137,22 +129,24 @@ def print_valid_transactions(sheet, token_price, token):
 
     print(f'token : {token} price : {float(token_price)}$')
     if price_cell_value is not None and float(price_cell_value) > float(token_price):
-        print(f"     Buy {sheet.range(f'N{row}').value} of {token} for {sheet.range(f'P{row}').value}$")
+        print_transaction("Buy", sheet.range(f'N{row}').value, token, sheet.range(f'P{row}').value)
         return None
 
     if token not in ['ETH','BTC'] :
-        for row in range(6, 200):
+        for row in range(6, 40):
             price_cell_value = sheet.range(f'O{row}').value
-            status_cell_value = sheet.range(f'Q{row}').value
 
-            if price_cell_value is not None and price_cell_value!= "Token Price" and status_cell_value != "Done":
-                if float(price_cell_value) < float(token_price) and token != "SHIB":
-                    print(f"     Sell {sheet.range(f'N{row}').value} of {token} for {sheet.range(f'P{row}').value}$ ")
-                    return None
-                elif (token == "SHIB") :
-                    if float(sheet.range(f'P{row}').value)/sheet.range(f'N{row}').value < float(token_price):
-                        print(f"     Sell {sheet.range(f'N{row}').value} of {token} for {sheet.range(f'P{row}').value}$ ")
+            if price_cell_value is not None and price_cell_value!= "Token Price" :
+                status_cell_value = sheet.range(f'Q{row}').value
+                if status_cell_value != "Done":
+                    if float(price_cell_value) < float(token_price) and token != "SHIB":
+                        print_transaction("Sell", sheet.range(f'N{row}').value, token, sheet.range(f'P{row}').value)
                         return None
+                    if (token == "SHIB") :
+                        if float(sheet.range(f'P{row}').value)/sheet.range(f'N{row}').value < float(token_price):
+                            print_transaction("Sell", sheet.range(f'N{row}').value, token, sheet.range(f'P{row}').value)
+                            return None
+    return None
 
 def get_dca_cell(sheet, plan_id, column_letter='E'):
     for row in sheet[column_letter]:
@@ -170,6 +164,9 @@ def get_yellow_cells(sheet, column_letter='B'):
             break
 
     return yellow_cells
+
+def print_transaction(transaction_type, amount, token, price):
+    print(f"     {transaction_type} {amount} of {token} for {price}$ ")
 
 if __name__ == "__main__" :
     main()
