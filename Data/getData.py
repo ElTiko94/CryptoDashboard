@@ -1,3 +1,8 @@
+"""
+An interactive tool designed to provide real-time insights into cryptocurrency portfolios. 
+It leverages APIs from CoinMarketCap and Binance to fetch up-to-date information, 
+offering users a comprehensive view of their digital assets.
+"""
 import json
 from os import environ, path
 import sys
@@ -11,6 +16,9 @@ from binance_getter import get_cumulative_total_rewards, get_auto_invest
 
 
 def main():
+    """
+    main function
+    """
     #today = datetime.datetime.now()
     today = datetime.datetime(2024, 1, 1)
     star_atlas_j0 = datetime.datetime(2021, 12, 17)
@@ -61,6 +69,9 @@ def main():
     input("\nPress Enter to close the Excel workbook...")
 
 def get_crypto_prices(symbols, api_key, session):
+    """
+    Get token price from token in symbols list, with Coinmarket cap API"
+    """
     url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest'
     parameters = {'symbol': ','.join(symbols)}
     headers = {'Accepts': 'application/json', 'X-CMC_PRO_API_KEY': api_key}
@@ -88,7 +99,10 @@ def get_crypto_prices(symbols, api_key, session):
 
     return prices
 
-def update_excel_file(file_name, token_prices,rewards, auto_invest, days):
+def update_excel_file(file_name, token_prices, rewards, auto_invest, days):
+    """
+    Update the excel history file, with prices up to date, staking rewards and DCA information
+    """
     excel_file = openpyxl.load_workbook(file_name)
 
     # Update Star Atlas number of Stacking days
@@ -124,6 +138,9 @@ def update_excel_file(file_name, token_prices,rewards, auto_invest, days):
     excel_file.save(file_name)
 
 def print_valid_transactions(sheet, token_price, token):
+    """
+    Look for transactions that could be done and printing it
+    """
     row = 3
     price_cell_value = sheet.range(f'O{row}').value
 
@@ -149,12 +166,18 @@ def print_valid_transactions(sheet, token_price, token):
     return None
 
 def get_dca_cell(sheet, plan_id, column_letter='E'):
+    """
+    Look for DCA cell correponding to the plan_id in a specific sheet
+    """
     for row in sheet[column_letter]:
         if row.value == plan_id:
             return row.row
     return None
 
 def get_yellow_cells(sheet, column_letter='B'):
+    """
+    Find filled yellow cell
+    """
     yellow_cells = []
 
     # Iterate through each cell in the specified column
@@ -166,6 +189,9 @@ def get_yellow_cells(sheet, column_letter='B'):
     return yellow_cells
 
 def print_transaction(transaction_type, amount, token, price):
+    """
+    Printing valid transaction tamplate
+    """
     print(f"     {transaction_type} {amount} of {token} for {price}$ ")
 
 if __name__ == "__main__" :
