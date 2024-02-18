@@ -4,8 +4,10 @@ import time
 from urllib.parse import urlencode
 
 
-# Generic function for making API requests
 def make_api_request(session, url_path, api_key, api_secret, payload={}):
+    """
+    Generic function for making API requests
+    """
     response = send_signed_request('GET', url_path, session, api_key, api_secret, payload)
 
     if response.status_code == 200:
