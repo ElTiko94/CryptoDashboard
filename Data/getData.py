@@ -187,11 +187,20 @@ def get_yellow_cells(sheet, column_letter='B'):
 
     return yellow_cells
 
-def print_transaction(transaction_type, amount, token, price):
+def print_transaction(transaction_type: str, amount: float, token: str, price: float):
     """
-    Printing valid transaction tamplate
+    Print a valid transaction template.
+
+    Parameters:
+        transaction_type (str): The type of transaction (e.g., 'Buy', 'Sell').
+        amount (float): The amount of tokens involved in the transaction.
+        token (str): The name or symbol of the token.
+        price (float): The price of the transaction.
+
+    Prints:
+        A formatted string displaying transaction details.
     """
-    print(f"     {transaction_type} {amount} of {token} for {price}$ ")
+    print(f"     {transaction_type} {amount} of {token} for ${price:.2f}")
 
 if __name__ == "__main__" :
     main()
